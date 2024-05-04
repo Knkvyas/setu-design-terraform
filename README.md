@@ -1,4 +1,4 @@
-# Root Terraform Configuration for AWS Infrastructure
+# Terraform Configuration for AWS Infrastructure
 
 ## Overview
 This repository aims to utilize Terraform for designing AWS infrastructure according to the provided use-case.
