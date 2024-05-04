@@ -41,8 +41,10 @@ module "public_backend_app" {
   instance_type         = var.instance_type
   app_iam_profile       = module.access_manager.iam_instance_profile
   security_group_ids    = [module.network_module.public_app_security_group_id]
+  alb_sg_id             = [module.network_module.alb_sg_id]
   vpc_id                = module.network_module.vpc_id
   subnet_ids            = module.network_module.app_subnet_ids
+  public_subnet_ids     = module.network_module.public_subnet_ids
   alb_listener_port     = var.alb_listener_port
   alb_listener_protocol = var.alb_listener_protocol
   alb_tg_port           = var.alb_tg_port

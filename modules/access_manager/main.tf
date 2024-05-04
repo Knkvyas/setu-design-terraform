@@ -18,13 +18,13 @@ resource "aws_iam_role" "ec2_rds_access_role" {
 }
 
 resource "aws_iam_policy" "ec2_rds_kms_policy" {
-  name = "EC2RDSKMSAccessPolicy"
+  name   = "EC2RDSKMSAccessPolicy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
-        Action = [
+        Effect   = "Allow",
+        Action   = [
           "kms:Encrypt",
           "kms:Decrypt",
           "kms:ReEncrypt*",
@@ -41,16 +41,27 @@ resource "aws_iam_policy" "ec2_rds_kms_policy" {
         Resource = "*"
       },
       {
-        Action = [
+        Effect   = "Allow",
+        Action   = [
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ],
-        Effect = "Allow",
         Resource = var.rds_secret_manager_arn
+      },
+      {
+        Effect   = "Allow",
+        Action   = [
+          "logs:PutLogEvents",
+          "logs:CreateLogStream",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ],
+        Resource = "*"
       }
     ]
   })
 }
+
 
 resource "aws_iam_policy_attachment" "ec2_rds_kms_policy_attachment" {
   name       = "EC2RDSKMSAccessPolicyAttachment"
@@ -96,17 +107,7 @@ resource "aws_kms_key_policy" "rds_kms_key_policy" {
         }
         Resource = "*"
         Sid      = "Enable IAM User Permissions"
-      },
-      {
-        Actions = [
-          "logs:PutLogEvents",
-          "logs:CreateLogStream",
-          "logs:DescribeLogGroups",
-          "logs:DescribeLogStreams",
-        ]
-        Effect = "Allow"
-        Eesources = "*"
-    }
+      }
     ]
     Version = "2012-10-17"
   })

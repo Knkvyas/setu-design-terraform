@@ -13,7 +13,6 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
-
 resource "aws_launch_template" "public_app_template" {
   name_prefix   = "backend-public-ec2"
   image_id      = var.frontend_ami_id != null ? var.frontend_ami_id : data.aws_ami.amazon_linux_2.id
@@ -55,8 +54,8 @@ resource "aws_lb" "public_app_alb" {
   name               = var.alb_name
   internal           = false
   load_balancer_type = "application"
-  security_groups    = var.security_group_ids
-  subnets            = var.subnet_ids
+  security_groups    = var.alb_sg_id
+  subnets            = var.public_subnet_ids
 
   enable_deletion_protection = false
 }

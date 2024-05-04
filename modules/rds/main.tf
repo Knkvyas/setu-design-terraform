@@ -47,12 +47,13 @@ resource "aws_db_instance" "rds" {
   multi_az                  = true
   username                  = var.db_username
   password         = random_password.master.result
-  # skip_final_snapshot       = true
+  skip_final_snapshot       = false
+  final_snapshot_identifier = "rds-final-snapshot" 
   delete_automated_backups  = false
   deletion_protection = true
   backup_retention_period   = var.backup_retention_period
-  backup_window   = "03:00-06:00"
-  maintenance_window = "Sun:05:00-Sun:06:00"
+  backup_window   = "03:00-05:00"
+  maintenance_window = "Sun:06:00-Sun:07:00"
   vpc_security_group_ids = [var.security_group_id]
   db_subnet_group_name      = aws_db_subnet_group.db_subnet_group.name
   storage_encrypted         = true

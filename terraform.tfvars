@@ -1,12 +1,12 @@
 env                   = "dev"
 region                = "us-east-1"
-public_app_ami        = ""
+public_app_ami        = "ami-07caf09b362be10b8"
 alb_name              = "public-backend-alb"
 alb_tg_port           = 80
 alb_tg_protocol       = "HTTP"
 alb_listener_port     = 80
 alb_listener_protocol = "HTTP"
-private_app_ami       = ""
+private_app_ami       = "ami-07caf09b362be10b8"
 nlb_name              = "private-backend-nlb"
 nlb_tg_port           = 80
 nlb_tg_protocol       = "TCP"

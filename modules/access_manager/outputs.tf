@@ -1,5 +1,5 @@
 output "iam_instance_profile" {
-  value = aws_iam_instance_profile.ec2_iam_profile.arn
+  value = aws_iam_instance_profile.ec2_iam_profile.name
 }
 
 output "iam_role_arn" {

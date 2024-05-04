@@ -10,7 +10,15 @@ This Terraform configuration orchestrates the deployment of a comprehensive AWS 
 
 Below is the diagram illustrating the overall infrastructure setup:
 
-![Infrastructure Architecture](architecture.png)
+![Infrastructure Architecture](./setu_usecase_architecture.png)
+
+## Connect to Ec2 Instances
+
+By leveraging SSM Session Manager, you gain a secure and centralized approach to accessing your EC2 instances, improving overall security and manageability.
+
+- **Enhanced Security**: Eliminates the need to manage SSH keys or open inbound SSH ports on your security groups, reducing the attack surface.
+- **Centralized Management**: Manage access from a single location using IAM policies.
+- **Auditing & Logging**: Track and audit all access attempts for improved security posture.
 
 ## Backend Configuration
 
@@ -130,8 +138,6 @@ Ensure that all variables are correctly defined in your Terraform configurations
 To enhance the usability and management of deployed resources, Outputs for Terraform modules are:
 
 - **VPC ID**: To reference the VPC in other configurations or modules.
-- **Subnet IDs**: Useful for deploying additional resources within the created subnets.
-- **Security Group IDs**: For referencing and applying additional rules or associated resources.
 - **RDS Endpoint**: Essential for applications to connect to the database.
 - **Load Balancer DNS Name**: Critical for accessing the deployed applications.
 
@@ -222,6 +228,19 @@ To ensure secure and efficient provisioning of AWS resources through Terraform, 
   - `iam:AttachRolePolicy`
   - `iam:DetachRolePolicy`
   - `iam:PutRolePolicy`
+
+### Secret Manager
+
+- **Actions**:
+  - `secretsmanager:GetSecretValue`,
+  - `secretsmanager:DescribeSecret`,
+  - `secretsmanager:PutSecretValue`,
+  - `secretsmanager:CreateSecret`,
+  - `secretsmanager:DeleteSecret`,
+  - `secretsmanager:ListSecrets`,
+  - `secretsmanager:TagResource`,
+  - `secretsmanager:UpdateSecret`
+
 
 ## Best Practices
 

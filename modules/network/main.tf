@@ -89,6 +89,8 @@ resource "aws_network_acl_rule" "app_inbound_http" {
   to_port        = tonumber(each.value)
   cidr_block     = "0.0.0.0/0"
 }
+
+
 resource "aws_network_acl_rule" "app_egress_http" {
   for_each       = toset(var.inbound_ports)
   network_acl_id = aws_network_acl.app_nacl.id
@@ -101,6 +103,16 @@ resource "aws_network_acl_rule" "app_egress_http" {
   cidr_block     = "0.0.0.0/0"
 }
 
+resource "aws_network_acl_rule" "app_egress" {
+  network_acl_id = aws_network_acl.app_nacl.id
+  rule_number    = 200
+  rule_action    = "allow"
+  egress         = true
+  protocol       = "-1"
+  from_port      = 0
+  to_port        = 0
+  cidr_block     = aws_vpc.main.cidr_block
+}
 
 resource "aws_network_acl_rule" "app_egress_rds" {
   count          = length(aws_subnet.app_subnet)
@@ -258,24 +270,33 @@ resource "aws_security_group" "private_app_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.public_app_sg.id]
   }
-
-  # egress {
-  #   from_port       = var.rds_egress_from_port
-  #   to_port         = var.rds_egress_to_port
-  #   protocol        = "tcp"
-  #   security_groups = [aws_security_group.rds_sg.id]
-  # }
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
 }
 
-resource "aws_security_group_rule" "private_egress_rds" {
+# resource "aws_security_group_rule" "private_egress_rds" {
+#   type              = "egress"
+#   to_port           = 0
+#   protocol          = "-1"
+#   source_security_group_id   = aws_security_group.rds_sg.id
+#   from_port         = 0
+#   security_group_id = aws_security_group.private_app_sg.id
+#   depends_on = [ aws_security_group.rds_sg ]
+# } 
+resource "aws_security_group_rule" "public_egress_rds" {
   type              = "egress"
-  to_port           = var.rds_egress_to_port
-  protocol          = "tcp"
+  to_port           = 0
+  protocol          = "-1"
   source_security_group_id   = aws_security_group.rds_sg.id
-  from_port         = var.rds_egress_from_port
-  security_group_id = aws_security_group.private_app_sg.id
+  from_port         = 0
+  security_group_id = aws_security_group.public_app_sg.id
   depends_on = [ aws_security_group.rds_sg ]
 } 
+
 
 ############## Security Group Rules for Database ##############################################
 
@@ -296,13 +317,12 @@ resource "aws_security_group" "rds_sg" {
 ################# Security Group for VPC Endpoint ##################
 resource "aws_security_group" "vpc_endpoint_sg" {
   name        = "vpc-endpoint-sg"
-  description = "Security group for VPC endpoint"
   vpc_id = aws_vpc.main.id
   ingress {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    cidr_blocks = [aws_vpc.main.id]
+    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
   # Outbound rules: Allow all outbound traffic
@@ -318,6 +338,35 @@ resource "aws_security_group" "vpc_endpoint_sg" {
   }
 }
 
+
+resource "aws_security_group" "alb_sg" {
+  name        = "elb-sg"
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTP traffic from anywhere
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTPS traffic from anywhere
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow all outbound traffic
+  }
+
+  tags = {
+    Name = "alb-security-group"
+  }
+}
 
 ################# VPC Endpoint ##########################
 resource "aws_vpc_endpoint" "ssm" {

@@ -15,14 +15,22 @@ variable "app_iam_profile" {
 
 variable "subnet_ids" {
   type        = list(string)
-  description = "List of subnet IDs for the ASG and ALB"
+  description = "List of subnet IDs for the ASG"
+}
+
+variable "public_subnet_ids" {
+  type        = list(string)
+  description = "List of subnet IDs for the ALB"
 }
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "List of security group IDs for the EC2 instances and ALB"
+  description = "List of security group IDs for the EC2 instances"
 }
-
+variable "alb_sg_id" {
+  type = list(string)
+  description = "List of security group IDs for the ALB"
+}
 variable "vpc_id" {
   type        = string
   description = "The VPC ID where the resources will be deployed"
