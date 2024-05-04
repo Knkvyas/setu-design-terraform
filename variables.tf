@@ -35,23 +35,6 @@ variable "rds_egress_to_port" {
   # default     = 3306
 }
 
-
-
-# variable "subnet_ids" {
-#   type        = list(string)
-#   description = "List of subnet IDs for the ASG and ALB"
-# }
-
-# variable "security_group_ids" {
-#   type        = list(string)
-#   description = "List of security group IDs for the EC2 instances and ALB"
-# }
-
-# variable "vpc_id" {
-#   type        = string
-#   description = "The VPC ID where the resources will be deployed"
-# }
-
 ##########3 RDS Database ##############
 
 variable "db_identifier" {

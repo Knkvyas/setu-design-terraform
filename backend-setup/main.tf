@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "tf_s3_state" {
     lifecycle {
         prevent_destroy = true
     }
-
+    
     tags = {
         Name = "Terraform State Bucket"
         Environment = var.env
